@@ -1,0 +1,20 @@
+<erl>
+out(A) ->
+       {ssi,"HEAD",[],[]}.
+</erl>
+
+<body>
+
+<erl>
+out(A) ->
+	yaws_test:edit_ehtml().
+</erl>
+<erl>
+out(A) ->
+	{ehtml,
+	       [io_lib:format("Date[~p]~n",[calendar:local_time()])]
+	}.
+</erl>
+
+</body>
+</html>

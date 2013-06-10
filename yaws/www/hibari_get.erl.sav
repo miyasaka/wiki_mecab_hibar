@@ -1,0 +1,65 @@
+-module(hibari_get).
+-define(HIBARI_CLIENT_NODE,'hibariclient@127.0.0.1').
+-define(RPC_TIMEOUT,5000).
+-define(HIBARI_TAB,'key_tab').
+%-define(HIBARI_TAB,'msg_no_tab').
+
+-export([read_key/1]).
+
+read_key(Post_Param) ->
+	%[Para1|Para2] = Post_Param,
+	%{_Pos1,Tab_Name} = Para1,
+	%{_Pos2,Search_Key} = Para2,
+	L=yaws_api:parse_post(Post_Param),
+	L.
+
+%	Response = hibari_get(?HIBARI_TAB,Search_Key),
+%	Response.
+
+read_more([],ZZ) ->
+     {ok,ZZ}; 
+
+read_more([Key|List],ZZ) -> 
+	 case rpc(brick_simple,get,[msg_tab,Key]) of
+     {ok,_,Val} ->
+	 	Z = [lists:concat([binary_to_list(Val),"<br>"]) | ZZ],
+		read_more(List,Z);
+     key_not_exist ->
+         key_not_exist;
+     brick_not_available ->
+         brick_not_available;
+     {txn_fail, _Reason} ->
+         txn_fail
+  	end.
+
+make_key_list(Val) ->
+     List_Key = string:tokens(binary_to_list(Val),","),
+     List_Key.
+
+hibari_get(Tab,Key) ->
+  case rpc(brick_simple,get,[Tab,Key]) of
+     {ok,_,Val} ->
+	 	case Tab of
+	     	key_tab ->
+         		List_Key = make_key_list(Val),
+     			Response = read_more(List_Key,[]),
+				Response;
+			_ ->
+         		{ok,binary_to_list(Val)}
+		 end;
+     key_not_exist ->
+	 	key_not_exist;
+     brick_not_available ->
+	 	brick_not_available;
+     {txn_fail,_Reason} ->
+        txn_fail
+  end.
+
+rpc(Module, Fun, Params) ->
+    case rpc:call(?HIBARI_CLIENT_NODE, Module, Fun, Params, ?RPC_TIMEOUT) of
+        {badrpc, nodedown} ->
+            io:format("Hibari client ~p is not running~n", [?HIBARI_CLIENT_NODE]),
+            {error, nodedown};
+        Response ->
+            Response
+    end.

@@ -1,0 +1,68 @@
+<erl>
+	out(Args) ->
+			{ehtml,
+    			[{ssi,"HEAD",[],[]}
+	 			%f("Args.Documet roots~p",[yaws_api:parse_post(Args)])
+    			]}.
+</erl>
+
+<body>
+	<h3>No SQL Hibari</h3>
+<div id=entry>
+	<h4>Hibari</h4>
+<erl>
+box(Str) ->
+	{'div',[{class,"box"}],
+	{pre,[],yaws_api:htmlize(Str)}}.
+
+out(Args) ->
+	[Para1|T] = yaws_api:parse_post(Args),
+	[Para2|T2] = T,
+	[Para3|_] = T2,
+	{_,Table_Name} = Para1,
+	{_,Search_Key} = Para2,
+	{_,Mode} = Para3,
+
+		{ehtml,
+			[f("Args.Documet roots~p",[Args#arg.docroot]),
+			 f(" P3[~p]",[Mode]),
+             f("<br>",[]),
+             f("<br>",[]),
+			 {a,[{href,"index.yaws"}],"戻る"},
+             f("<br>",[])
+		    ]}.
+
+</erl>
+
+<erl>
+
+out(Args) ->
+	[Para1|T] = yaws_api:parse_post(Args),
+	[Para2|T2] = T,
+	[Para3|_] = T2,
+	{_,Table_Name} = Para1,
+	{_,Search_Key} = Para2,
+	{_,Mode} = Para3,
+
+	case hibari_get:read_key(list_to_atom(Table_Name),Search_Key,list_to_atom(Mode)) of
+		{ok,Which,Val} ->
+			{html,[
+			f("<ol>",[]),
+			f("Result:[~ts]<br>",[Search_Key]),
+			f("[~p][~p]<br><br>",[Mode,Which]),
+			f("~ts",[Val]),
+			%f("Result:[~ts]<br>~ts",[Search_Key,Val]),
+			f("</ol>",[])]};
+		Other ->
+			{html,[f("Error!!!!! <br>  **~p**",[Other])]}
+	end.
+			
+</erl>
+
+</div>
+</body>
+
+<erl>
+	out(Args) ->
+		{ssi,"END",[],[]}.
+</erl>

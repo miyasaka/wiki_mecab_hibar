@@ -1,0 +1,127 @@
+-module(wiki_test).
+-export([m/2]).
+
+-define(HIBARI_CLIENT_NODE,'hibariclient@192.168.0.183').
+-define(RPC_TIMEOUT, 50000).
+-define(MAX_MSG_TAB, 100).
+-define(MAX_KEY_TAB, 100).
+-define(WIKI_DIR,"/home/public/frontier/").
+
+m(N,M) when is_integer(N), is_integer(M), N >= 0, N =< M ->
+	get_file(N,M).
+   %% file:delete(Filename);
+
+%m(_) ->
+%    io:format("usage:hibari_get_set_script.es [File Name]~n",[]),
+%    ok.
+
+get_file(N,M) when is_integer(N), is_integer(M), N >= 0, N =< M ->
+	Dir = lists:concat([?WIKI_DIR, integer_to_list(N)]),
+	Fun = fun(Fname,Acc) ->
+		catch_file(Fname,Acc)
+	end,
+	filelib:fold_files(Dir,"^fr_*", true, Fun,[]),
+	get_file(N + 1,M)
+;
+
+get_file(N,_M) ->
+	io:format("End:[~p]~n",[N])
+.
+
+catch_file(Fname,_Acc) ->
+	io:format("[~p]~n",[Fname]),
+    ok = read_file(Fname)
+.
+
+read_file(FileName) ->
+   case file:open(FileName,read) of 
+      {ok,Handle} ->
+	  		%% read first Line 
+			case io:read(Handle,'') of
+	   			{ok,{KeyNo}} ->
+					{Num,CategoryList} = read_line(Handle,[],0),
+					%% io:format("[~p]~n",[CategoryList]),
+					case call_store_wiki_key(Num,CategoryList,0) of
+						  ok ->
+						  	ok;
+						  miss ->
+						    miss
+					end;
+							%io:format("[~p]:[~ts][~ts]~n",[KeyNo,Key,CategoryList]),
+     			eof ->
+        			eof;
+   				Error ->
+       		 		Error
+			end;
+			%ok = set_keylist(KeyList)
+	   {error,_} -> 
+          	io:format("Can't Open [~s] ~n",[FileName])
+end.
+
+read_line(Handle,Str,Line) ->
+	case io:read(Handle,'') of
+	   {ok,{Text}} ->
+			case Str of 
+				[] ->
+					read_line(Handle,Text,Line + 1);
+				_Other ->
+					read_line(Handle,lists:concat([Str,",",Text]),Line + 1)
+			end;
+     	eof ->
+        	file:close(Handle),
+        	{Line,string:tokens(Str,",")}; Error -> file:close(Handle),
+       		{Line, Error}
+	end
+.
+
+make_category_tab(mode) ->
+	%list_to_atom("category_tab_1")
+	random:seed(now()),
+	when mode of 
+		category_tab ->
+			list_to_atom(string:concat("category_tab_",integer_to_list(random:uniform(?MAX_KEY_TAB)))) ;
+		key_tab ->
+			list_to_atom(string:concat("key_tab_",integer_to_list(random:uniform(?MAX_KEY_TAB)))) 
+	end
+.
+
+call_store_wiki_key(Num,[Top | CategoryList],LoopCnt) when LoopCnt < Num ->
+	CList = lists:concat(lists:map(fun(X) -> string:concat(X,",") end,CategoryList)),
+%% io:format("key:~p :~p~n",[Top,CList]),
+	store_wiki_key(Top,CList),
+	call_store_wiki_key(Num,lists:concat([CategoryList,[Top]]),LoopCnt + 1)
+;
+
+call_store_wiki_key(Num,_,LoopCnt) when LoopCnt >= Num->
+ok
+.
+
+store_wiki_key(Key,CategoryList) ->
+	Tab = make_category_tab(),
+  	case rpc(brick_simple,get,[Tab,Key]) of
+     {ok,_,Val} ->
+		N = lists:usort(
+			lists:concat([string:tokens(CategoryList,","),string:tokens(binary_to_list(Val),",")])),
+		NewValue = lists:map(fun(X) -> string:concat(X,",") end, N),
+		_Ret = rpc(brick_simple,set,[Tab,Key,NewValue]),
+		ok;
+     key_not_exist ->
+         _Ret = rpc(brick_simple,set,[Tab,Key,CategoryList]),
+		 %io:format("Ret key not[~p]~n",[Ret]),
+		 ok;
+     brick_not_available ->
+         io:format("Brick Not Available~n",[]);
+     {txn_fail,[{A,B}]} ->
+         io:format("Error[~p][~p]~n",[A,B])
+   end
+.
+
+rpc(Module, Fun, Params) ->
+    case rpc:call(?HIBARI_CLIENT_NODE, Module, Fun, Params, ?RPC_TIMEOUT) of
+        {badrpc, nodedown} ->
+            io:format("Hibari client ~p is not running~n", [?HIBARI_CLIENT_NODE]),
+            {error, nodedown};
+        Response ->
+            Response
+end.
+

@@ -1,0 +1,21 @@
+<erl>
+-define(FILE_DIR,"/home/public/frontier/").
+
+out(Args) ->
+  Fname = lists:concat([?FILE_DIR,lists:concat(["fr_tmp_",
+                 integer_to_list(misc_lib:make_timestamp()),".txt"])]),
+	[Para1|_] = yaws_api:parse_post(Args),
+	{_,TextData} = Para1,
+	case TextData of
+		[] ->
+			ok;
+		_Other ->
+			case file:open(Fname,write) of
+				{ok,Handle} ->
+					file:write(Handle,TextData),
+					file:close(Handle);
+				{error,Reason} ->
+					io:format("Can't Open [~p]\n",[Reason])
+			end
+    end.
+</erl>

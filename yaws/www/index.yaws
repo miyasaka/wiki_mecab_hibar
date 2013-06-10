@@ -1,0 +1,89 @@
+<erl>
+	out(Args) ->
+		{ssi,"HEAD","%%",[]}.
+</erl>
+
+<body>
+	<h3> NoSQL Hibari </h3>
+<div id="entry">
+  <h4>Hibari </h4>
+  <form name="f1" method="POST"
+        action="/hibari_get_web.yaws" target="new">
+
+<!--
+    <p>Table</p>
+-->
+<!----
+    <input name="s_table" type="radio" value="key_tab" checked>検索
+    <input name="s_table" type="radio" value="msg_tab">Message(msg_tab key-word:Msg No.
+    <input name="s_table" type="radio" value="msg_no_tab">Max-Seq(max_no_tab key_no:Msg No.
+	</p>
+---->
+    <input name="s_table" type="hidden" value="category_tab_1" checked>
+
+    <p>検索キー</p>
+    <input name="s_key" type="text" size="20"> 
+    <input name="s_mode" type="checkbox" value="deep">aimai 
+	<!--
+	<a href="hibari_get_hotword_web.yaws" target="_blank">ホットワード</a>
+	-->
+	<p>
+      <input type="submit" name="search" value="search">
+	</p>
+
+  </form>
+
+  <!--
+  <table width="200">
+	<tr>
+    <p>キーを一覧する</p>
+	<form action="hibari_get_keylist_web.yaws" method="post" target="_blank">
+	<td>
+    <select name="tab">
+		<option value="list_no_1" selected>KEY_NO-01</option>
+		<option value="list_no_2">KEY_NO-02</option>
+		<option value="list_no_3">KEY_NO-03</option>
+		<option value="list_no_4">KEY_NO-04</option>
+		<option value="list_no_5">KEY_NO-05</option>
+		<option value="list_no_6">KEY_NO-06</option>
+		<option value="list_no_7">KEY_NO-07</option>
+		<option value="list_no_8">KEY_NO-08</option>
+		<option value="list_no_9">KEY_NO-09</option>
+		<option value="list_no_10">KEY_NO-10</option>
+	</selct>
+	</td>
+	<td>
+      <input type="submit" name="reg" value="search">
+	</td>
+	</form>
+    </tr>
+  </table>
+
+  <p>登録：<br>
+  <form name="f2" method="POST" target="f3" action="/data_write.yaws">
+	<textarea name="textdata" rows="5" cols="40"></textarea>
+	<p>
+      <input type="submit" name="reg" value="ok">
+      <input type="reset" value="Clear">
+	</p>
+  </form>
+ -->
+</div>
+
+<erl>
+out(Args) ->
+	Data = {ehtml,
+			["Footer <br>",
+			{a,[{href,"yaws_test_web.yaws"},{target,"_blank"}],"Test Link<br>"},
+			{a,[{href,"yaws_fold_table_web.yaws"},{target,"_blank"}],"fold table  Link"}
+			]},
+	Data.
+</erl>
+
+<iframe name="f3" width=0 height=0 style="visibility:hidden">aaaa</iframe>
+</body>
+
+<erl>
+	out(Args) ->
+		{ssi,"END",[],[]}.
+</erl>

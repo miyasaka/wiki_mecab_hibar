@@ -1,0 +1,45 @@
+<html>
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+ <body>
+	<h1> Hello Yaws!!! </h1>
+	<h2> Hello Hello Hello!!!!!!! </h2>
+<erl>
+
+out(Args) ->
+			   {html,[io_lib:format("Args[~p]",[Args]),
+			          io_lib:format("<br><h3>",[]),
+			          f("Args.Pid[~p]",[Args#arg.pid]),
+			          f("</h3><br>",[])]}.
+
+%----- OK
+%			{ehtml,
+%			  {h1,[],
+%			  	["Hello ,EHTML."]
+%			  }
+%			 }.
+%-----
+%----- OK
+%			   {html,io_lib:format("Args[~p]",[Args])}.
+%-----
+
+</erl>
+
+<p>Here is html close.</p>
+
+<erl>
+out(A) ->
+	{html,[f("Next Out",[]),
+	 f("<br>日本語のてすと<br>",[]),
+	 f("Docroot:[~p]",[A#arg.docroot]),
+	 f("<br><br>",[])]}.
+</erl>
+<erl>
+out(B) ->
+	Data = {ehtml,
+			{html,[],
+				["I Just set your cookie to ",
+					{a,[{href,"http://yahoo.co.jp"},{target,"_blank"}],"here"}]}},
+	Data.
+</erl>
+ </body>
+</html>

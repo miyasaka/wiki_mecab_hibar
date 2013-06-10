@@ -1,0 +1,22 @@
+<html>
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+ <body>
+	<h1> Hello Yaws!!! </h1>
+	<h2> Hello Hello Hello!!!!!!! </h2>
+<erl>
+-define(HIBARI_CLIENT_NODE,'hibariclient@127.0.0.1').
+-define(RPC_TIMEOUT,5000).
+
+out(Args) ->
+	% case rpc:call(?HIBARI_CLIENT_NODE,brick_simple,get,[msg_no_tab,key_no],?RPC_TIMEOUT) of
+	case rpc:call(?HIBARI_CLIENT_NODE,brick_simple,get,[msg_tab,50],?RPC_TIMEOUT) of
+		{badproc,Reason} ->
+			{ehtml,io_lib:format("badproc[~p]<br>",[Reason])},
+			{error,Reason};
+		{ok,_,Val} ->
+			{ehtml, io_lib:format("Val:[~ts]<br>",[binary_to_list(Val)])}
+		end.
+
+</erl>
+ </body>
+</html>

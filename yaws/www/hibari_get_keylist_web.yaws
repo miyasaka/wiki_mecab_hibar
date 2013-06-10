@@ -1,0 +1,55 @@
+<erl>
+	out(Args) ->
+	{ehtml,
+	    [{ssi,"HEAD",[],[]}
+	    ]}.
+</erl>
+
+<body>
+	<h3>No SQL Hibari Key List</h3>
+<div id=entry>
+	<h4>Hibari</h4>
+<erl>
+box(Str) ->
+	{'div',[{class,"box"}],
+	{pre,[],yaws_api:htmlize(Str)}}.
+
+out(Args) ->
+		{ehtml,
+			[f("Args.Documet roots~p",[Args#arg.docroot]),
+             f("<br>",[]),
+             f("<br>",[]),
+			 {a,[{href,"javascript:void(0)"},{onclick,"window.close();"}],"close"},
+             f("<br>",[])
+		    ]}.
+
+</erl>
+
+<erl>
+
+out(Args) ->
+    [Para1|_] = yaws_api:parse_post(Args),
+    {_,Key_Name} = Para1,
+   case hibari_get_keylist:get_keylist(Key_Name) of
+           {ok,_Ts,Val} ->
+		        %VList = lists:map(fun(X) -> lists:concat(["<li>",X,"</li>"]) end,string:tokens(Val,",")),
+		        VList = [lists:concat(["<li>",X,"</li>"]) || X <- string:tokens(Val,",")],
+			    {ehtml,[
+				   f("<ol>",[]),
+			       f("Result:~ts",[VList]),
+				   f("</ol>",[])
+			       %f("Result:~ts",[Val])
+				   ]};
+			       %%f("Result:~p",[Val])]};
+			Other ->
+				 {ehtml,[f("Error!!!!! <br>  **~p**",[Other])]}
+	end.
+</erl>
+
+</div>
+</body>
+
+<erl>
+	out(Args) ->
+		{ssi,"END",[],[]}.
+</erl>

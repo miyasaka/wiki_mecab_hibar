@@ -1,0 +1,71 @@
+<erl>
+	out(Args) ->
+	{ehtml,
+	    [{ssi,"HEAD",[],[]}
+	    ]}.
+</erl>
+
+<body>
+	<h3>No SQL Hibari Key List</h3>
+<div id=entry>
+	<h4>Hibari</h4>
+<erl>
+box(Str) ->
+	{'div',[{class,"box"}],
+	{pre,[],yaws_api:htmlize(Str)}}.
+
+out(Args) ->
+		{ehtml,
+			[f("Args.Documet roots~p",[Args#arg.docroot]),
+             f("<br>",[]),
+             f("<br>",[]),
+			 {a,[{href,"javascript:void(0)"},{onclick,"window.close();"}],"close"},
+             f("<br>",[])
+		    ]}.
+
+</erl>
+
+<erl>
+-define(HIBARI_CLIENT_NODE,'hibariclient@192.168.0.157').
+-define(RPC_TIMEOUT, 5000).
+-define(MAX_KEYLIST, 500).
+
+rpc(Module, Fun, Params) ->
+    case rpc:call(?HIBARI_CLIENT_NODE, Module, Fun, Params, ?RPC_TIMEOUT) of
+		{badrpc, nodedown} ->
+	    	io:format("Hibari client ~p is not running~n", [?HIBARI_CLIENT_NODE]),
+	    {error, nodedown};
+	    Response ->
+	       Response
+end.
+
+display(K,Val) ->
+    io:format("~p,~p~n",[K,Val]).
+
+out(Args) ->
+   %Fun = fun({_Ch, {Key,_Ts,Val,_,_}},_Acc) ->
+   Fun = fun({_Ch, {_}}) ->
+   				display("Key","Value")
+    				%{ehtml,[
+	   				%	%f("<ol>",[]),
+       				%	%f("Result:~p",[Val]),
+	   				%	%f("</ol>",[])
+       				%	f("Result:*~p*",[binary_to_list(Key)])
+   					%]}
+				 end,
+	      case rpc(brick_simple,fold_table,[hot_word_tab, Fun, ok, ?MAX_KEYLIST,[] ]) of
+	      %case rpc(brick_simple,fold_table,[hot_word_tab, Fun, ok, ?MAX_KEYLIST, [witness]]) of
+	           {ok,Acc,_} ->
+	              ok;
+	           {error,GdssError,_Acc,_Interations} ->
+				 {ehtml,[f("Error!!!!! <br>  **~p**",[GdssError])]}
+          end.
+</erl>
+
+</div>
+</body>
+
+<erl>
+	out(Args) ->
+		{ssi,"END",[],[]}.
+</erl>

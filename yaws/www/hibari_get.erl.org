@@ -1,0 +1,85 @@
+-module(hibari_get).
+-define(HIBARI_CLIENT_NODE,'hibariclient@192.168.0.184').
+-define(RPC_TIMEOUT,8000).
+-define(TABLE_NUMS,20).
+
+-export([read_key/2]).
+
+read_key(_Tab,Key) ->
+	Response = read_more(Key,[],1),
+	Response.
+
+mod_html(Str,MP) ->
+	case re:run(Str, MP) of
+		{match, Captured} ->
+			io:format("match:~p~n",[Captured]),
+			Rep = "<br>",
+			Replace = re:replace(Str,MP,[Rep]),
+			Sub = binList_to_list(Replace),
+			mod_html([Sub],MP);
+		nomatch ->
+			Str
+    end
+.
+
+binList_to_list([]) ->
+    []
+;
+binList_to_list(Lists) when is_binary(Lists) ->
+    binary_to_list(Lists)
+;
+binList_to_list(Lists) when is_list(Lists) ->
+    [H | T] = Lists,
+    case is_binary(H) of
+        true ->
+            HeadStr = binary_to_list(H),
+            HeadStr ++ binList_to_list(T);
+        false ->
+            H ++ binList_to_list(T)
+	end
+.
+
+read_more(_Key,Str,N) when N > ?TABLE_NUMS ->
+	Regexp = [","],
+    case re:compile(Regexp) of
+        {ok,MP} ->
+            StrHtml = mod_html(Str,MP),
+            {ok,StrHtml};
+        {error, ErrSpec} ->
+            io:format("Compile Error ~p~n",[ErrSpec]),
+            error
+    end
+;
+
+read_more(Key,Str,N) when N =< ?TABLE_NUMS -> 
+	 Tab = list_to_atom(string:concat("category_tab_", integer_to_list(N))),
+	 case rpc(brick_simple,get,[Tab,Key]) of
+     {ok,_Ts,Val} ->
+	 	%%Z = Str ++ [binary_to_list(Val)],
+	 	Z = lists:umerge(Str, [binary_to_list(Val)]),
+		read_more(Key,Z,N + 1);
+     key_not_exist ->
+		read_more(Key,Str,N + 1);
+     brick_not_available ->
+         brick_not_available;
+     {txn_fail, _Reason} ->
+         txn_fail
+  	end.
+
+%make_key_list(Val) ->
+%     %L2 = lists:reverse(lists:sort(L1)),
+%	 %List_Key = lists:map(fun(X) -> integer_to_list(X) end,L2),
+%     %List_Key = string:tokens(binary_to_list(Val),","),
+%     %List_Key = lists:usort(string:tokens(binary_to_list(Val),",")),
+%     %List_Key = lists:reverse(lists:usort(string:tokens(binary_to_list(Val),","))),
+%	 List_Key = string:tokens(binary_to_list(Val),","),
+%	 List_Key.
+
+rpc(Module, Fun, Params) ->
+    case rpc:call(?HIBARI_CLIENT_NODE, Module, Fun, Params, ?RPC_TIMEOUT) of
+        {badrpc, nodedown} ->
+            io:format("Hibari client ~p is not running~n", [?HIBARI_CLIENT_NODE]),
+            {error, nodedown};
+        Response ->
+            Response
+    end.

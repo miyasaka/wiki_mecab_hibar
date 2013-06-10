@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0;">
+    <title>Twitter / アプリケーション認証</title>
+
+    <link href="http://a0.twimg.com/a/1315857904/phoenix/css/tfw.bundle.css" media="screen" rel="stylesheet" type="text/css" />
+    <!--[if (IEMobile) & (lt IE 9)]>
+    <link href="http://a1.twimg.com/a/1315857904/phoenix/css/tfw_iemobile.bundle.css" media="screen" rel="stylesheet" type="text/css" />
+    <![endif]-->
+
+    
+
+    
+    <link rel="application-manifest" href="/twitter.webapp">
+    
+
+    <style type="text/css">
+      html { display:none; }
+    </style>
+    <noscript>
+      <style type="text/css">
+        html { display: block; }
+      </style>
+    </noscript>
+    <!--[if IEMobile & lt IE 9]>
+    <style type="text/css">
+      html { display: block; }
+    </style>
+    <![endif]-->
+
+  </head>
+  <body class="oauth tfw ja logged-out noloki">
+
+    <div id="header" role="banner">
+      <div class="bar">
+        <h1 class="logo"><a href="http://twitter.com/home" class="alternate-context">Twitter</a></h1>
+
+        
+        <div id="not-logged-in">
+  <a href="http://twitter.com/signup?context=oauth&amp;oauth_token=Q0ELMTZ4kdj7ajIrm6xbpvWSDI4AoBEouLuvDoCBQ" class="sign-up alternate-context">新規登録</a></div>
+        
+      </div>
+    </div>
+
+    <div id="bd" role="main">
+      
+
+
+
+
+
+<div class="auth">
+  <h2>Tweet Erlangがあなたのアカウントを利用することを許可しますか?</h2>
+
+  
+<div class="app-info" role="content-info" tabindex="0">
+  <h3>
+    <img alt="" class="app-icon" src="http://a3.twimg.com/a/1315857904/images/oauth_application.png" title="Tweet Erlang" />
+    Tweet Erlang
+  </h3>
+  <dl>
+    <dt class="url">アプリケーションのURL</dt>
+    <dd class="url">now.prepare.jp</dd>
+    <dt class="notes">このアプリケーションについて</dt>
+    <dd class="notes"><p>Erlang Twitter Client</p></dd>
+  </dl>
+  <p><a href="http://now.prepare.jp?denied=Q0ELMTZ4kdj7ajIrm6xbpvWSDI4AoBEouLuvDoCBQ" class="deny maintain-context">キャンセルしてアプリに戻る</a></p>
+</div>
+
+
+
+  <div class="permissions allow">
+  <p>この連携アプリを認証すると、次の動作が<strong>許可されます</strong>。</p>
+  <ul>
+    <li>タイムラインのツイートを見る。</li>
+    
+    <li>フォローしている人を見る。</li>
+
+
+    
+    
+  </ul>
+</div>
+
+
+  <form action="https://api.twitter.com/oauth/authorize" id="oauth_form" method="post"><div style="margin:0;padding:0"><input name="authenticity_token" type="hidden" value="5162382309e97fb1fd011a5d30e2c90a56354de1" /></div>
+
+    <input id="oauth_token" name="oauth_token" type="hidden" value="Q0ELMTZ4kdj7ajIrm6xbpvWSDI4AoBEouLuvDoCBQ" />        
+
+
+<fieldset class="sign-in">
+  <legend>Sign in to Twitter</legend>
+  <div class="row user">
+    <label for="username_or_email" tabindex="-1">ユーザー名、またはメールアドレス</label>
+    <input aria-required="true" autocapitalize="off" autocorrect="off" autofocus="autofocus" class="text" id="username_or_email" name="session[username_or_email]" required="required" type="text" />
+  </div>
+  <div class="row password">
+  <label for="password" tabindex="-1">パスワード</label>
+    <input aria-required="true" class="password" id="password" name="session[password]" required="required" type="password" value="" />
+  </div>
+  <p class="forgot"><a class="alternate-context" href="/account/resend_password">パスワードを忘れた？</a></p>
+</fieldset>
+
+
+
+    <fieldset class="buttons">
+      <legend>Tweet Erlangによるあなたのアカウントへのアクセスを認可しますか?</legend>
+      <input type="submit" value="連携アプリを認証" class="submit button selected" id="allow">
+      <input type="submit" value="許可を取り消す" class="submit button" name="deny" id="deny">
+    </fieldset>
+</form>
+  <div class="permissions deny">
+  <p>この連携アプリを認証しても、次の動作は<strong>許可されません</strong>。</p>
+  <ul>
+    <li>新しくフォローする。</li>
+    <li>プロフィールを更新する。</li>
+    <li>ツイートする。</li>
+
+    
+    
+    <li>ダイレクトメッセージを見る。</li>
+    
+
+    <li>Twitterのパスワードを見る。</li>
+  </ul>
+</div>
+
+</div>
+
+
+
+
+
+
+    </div>
+
+    
+
+    
+    <div class="footer" role="navigation"><div id="ft">
+      
+<p class="tip">設定の<a href="http://twitter.com/settings/applications">アプリ連携</a>からいつでも連携アプリの許可を取り消すことができます。</p>
+<p><small>連携アプリを認証することで<a href="http://twitter.com/tos">Twitterのサービス利用規約</a>に同意したことになります。また、いくつかの連携アプリの利用情報はTwitterにも共有されます。詳細については<a href="http://twitter.com/privacy">プライバシーポリシー</a>をご覧ください。</small></p>
+
+    </div></div>
+    
+
+    <script type="text/javascript" charset="utf-8">
+      var twttr = twttr || {};
+      twttr.form_authenticity_token = '5162382309e97fb1fd011a5d30e2c90a56354de1';
+      if (self == top) {
+        document.documentElement.style.display = 'block';
+      }
+    </script>
+
+    <script src="http://a1.twimg.com/a/1315857904/javascripts/loadrunner.js" data-main="tfw/intents/main" data-path="http://a1.twimg.com/a/1315857904/javascripts/modules" type="text/javascript"></script>
+
+    <script src="http://a1.twimg.com/a/1315857904/javascripts/i18n/ja.js?1315859709" type="application/javascript"></script>
+
+    
+    <script type="text/javascript" charset="utf-8">
+      
+using('imports/jquery', function($) {
+  $('.app-info').click(function() {
+    $(this).toggleClass('expanded');
+  });
+});
+using('imports/jquery', function($) {
+  $('input#allow').click(function() {
+    window.pageTracker && window.pageTracker._trackPageview('/oauth/approved/Tweet+Erlang');
+  });
+
+  $('input#deny').click(function() {
+    window.pageTracker && window.pageTracker._trackPageview('/oauth/declined/Tweet+Erlang');
+  });
+});
+using('imports/jquery', function($) {
+  // Adjust window sizes when opening the OAuth flow in a new window.
+  // NB. Pleasepleaseplease don't invoke OAuth flows in new window without a
+  //     visible address bar/SSL verification and scroll bar support. Hugs! ;-)
+  if(window.opener) {
+    $(function() {
+      buffer = 170;
+      content = document.getElementById('bd');
+      vph = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+      browser = window.outerHeight || vph + 60;
+      
+      vpw = window.innerWidth || document.documentElement.clientWidth + 29 || document.body.clientWidth + 29;
+      
+      if(vph < content.offsetHeight + buffer) {
+        window.resizeTo(vpw, content.offsetHeight + (browser - vph) + buffer);
+      }
+    });
+  }
+});
+
+      
+    </script>
+    
+        <!-- BEGIN google analytics -->
+
+  <script type="text/javascript">
+    var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+    document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+  </script>
+
+  <script type="text/javascript">
+
+    try {
+      var pageTracker = _gat._getTracker("UA-30775-6");
+      pageTracker._setDomainName("twitter.com");
+            pageTracker._setVar('Not Logged In');
+            pageTracker._setVar('lang: ja');
+            pageTracker._initData();
+                              pageTracker._trackPageview();
+                  } catch(err) { }
+
+  </script>
+
+  <!-- END google analytics -->
+
+
+
+  </body>
+</html>

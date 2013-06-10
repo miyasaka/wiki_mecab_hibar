@@ -1,0 +1,67 @@
+<erl>
+	out(Args) ->
+			{ehtml,
+    			[{ssi,"HEAD",[],[]},
+	 			f("Args.Documet roots~p",[yaws_api:parse_post(Args)])
+    			]}.
+</erl>
+
+<body>
+	<h3>No SQL Hibari</h3>
+<div id=entry>
+	<h4>Hibari</h4>
+<erl>
+box(Str) ->
+	{'div',[{class,"box"}],
+	{pre,[],yaws_api:htmlize(Str)}}.
+
+out(Args) ->
+		{ehtml,
+			[f("Args.Documet roots~p",[Args#arg.docroot]),
+             f("<br>",[]),
+             f("<br>",[]),
+			 {a,[{href,"index.yaws"}],"戻る"},
+             f("<br>",[])
+		    ]}.
+
+</erl>
+
+<erl>
+make_html([],Str) ->
+	Str;
+
+make_html([Val|T],Str) ->
+    % Get Timestamp & Values
+	%Ts = lists:concat(["<li>",tuple_to_list(Val),"</li>"]),
+	[ValTx|Next] = T,
+	%Tx = lists:concat(["<li>",tuple_to_list(ValTx),"</li><br>"]),
+	HtmlRow = lists:concat(["<li>",tuple_to_list(Val),"<br>",tuple_to_list(ValTx),"<br><br></li>"]),
+	make_html(Next, Str ++ HtmlRow ).
+	%make_html(T Str ++ Ts ++ Tx ).
+
+out(Args) ->
+	[Para1|T] = yaws_api:parse_post(Args),
+	[Para2|_] = T,
+	{_,Table_Name} = Para1,
+	{_,Search_Key} = Para2,
+
+	case hibari_get:read_key(list_to_atom(Table_Name),Search_Key) of
+		{ok,Val} ->
+			VList = make_html(Val,[]),
+			{html,[
+			f("<ol>",[]),
+			f("Result:[~ts]~ts",[Search_Key,VList]),
+			f("</ol>",[])]};
+		Other ->
+			{html,[f("Error!!!!! <br>  **~p**",[Other])]}
+	end.
+			
+</erl>
+
+</div>
+</body>
+
+<erl>
+	out(Args) ->
+		{ssi,"END",[],[]}.
+</erl>

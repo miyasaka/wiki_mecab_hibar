@@ -1,0 +1,64 @@
+<erl>
+	out(Args) ->
+	{ehtml,
+	    [{ssi,"HEAD1",[],[]}
+	    ]}.
+</erl>
+
+<body>
+	<h3>No SQL Hibari Hot Word</h3>
+<div id=entry>
+	<h4>Hibari</h4>
+<erl>
+box(Str) ->
+	{'div',[{class,"box"}],
+	{pre,[],yaws_api:htmlize(Str)}}.
+
+out(Args) ->
+		{ehtml,
+			[f("Args.Documet roots~p",[Args#arg.docroot]),
+             f("<br>",[]),
+             f("~p~n",[misc_lib:make_date(misc_lib:make_timestamp())]),
+             f("<br>",[]),
+			 {a,[{href,"javascript:void(0)"},{onclick,"window.close();"}],"close"},
+             f("<br>",[])
+		    ]}.
+
+</erl>
+
+<erl>
+make_html([],Str) ->
+	Str;
+
+make_html([Val|T],Str) ->
+    % Get Timestamp & Values
+	{Cnt,Key} = Val,
+	{ICnt} = Cnt,
+	A1 = lists:concat(["<tr><td>",tuple_to_list(Key),"</td><td>", integer_to_list(ICnt), " </td><tr>"]),
+	% Ts = lists:concat(["<li>",tuple_to_list(Val),"</li>"]),
+	make_html(T, Str ++ A1 ).
+
+out(Args) ->
+   case hibari_get_hotword:get_hotword() of
+           {ok,_Boolen,Val} ->
+		        VList = make_html(Val,[]),
+			    {ehtml,[
+			       f("<font size=\"3\" color=\"red\">［トップ　５０］</font>",[]),
+				   f("<table border = 2>",[]),
+			       %f("Result:~p",[VList])
+			       f("~ts",[VList]),
+				   f("</table>",[])
+				   ]};
+			       %%f("Result:~p",[Val])]};
+			Other ->
+				 {ehtml,[f("Error!!!!! <br>  **~p**",[Other])]}
+    end.
+</erl>
+
+</div>
+</body>
+
+<erl>
+	out(Args) ->
+		{ssi,"END",[],[]}.
+</erl>

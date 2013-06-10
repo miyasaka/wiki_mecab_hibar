@@ -1,0 +1,59 @@
+<erl>
+	out(Args) ->
+	{ehtml,
+	    [{ssi,"HEAD",[],[]}
+	    ]}.
+</erl>
+
+<body>
+	<h3>No SQL Hibari Key List</h3>
+<div id=entry>
+	<h4>Hibari</h4>
+<erl>
+box(Str) ->
+	{'div',[{class,"box"}],
+	{pre,[],yaws_api:htmlize(Str)}}.
+
+out(Args) ->
+		{ehtml,
+			[f("Args.Documet roots~p",[Args#arg.docroot]),
+             f("<br>",[]),
+             f("<br>",[]),
+			 {a,[{href,"index.yaws"}],"戻る"},
+             f("<br>",[])
+		    ]}.
+
+</erl>
+
+<erl>
+make_html([],Str) ->
+	Str;
+
+make_html([Val|T],Str) ->
+    % Get Timestamp & Values
+	Ts = lists:concat(["<li>",tuple_to_list(Val),"</li>"]),
+	make_html(T, Str ++ Ts ).
+
+out(Args) ->
+   case hibari_get_keylist:get_keylist() of
+           {ok,_Boolen,Val} ->
+		        VList = make_html(lists:usort(Val),[]),
+			    {html,[
+				   f("<ol>",[]),
+			       %f("Result:~p",[Val]),
+			       f("Result:~ts",[VList]),
+				   f("</ol>",[])
+				   ]};
+			       %%f("Result:~p",[Val])]};
+			Other ->
+				 {html,[f("Error!!!!! <br>  **~p**",[Other])]}
+    end.
+</erl>
+
+</div>
+</body>
+
+<erl>
+	out(Args) ->
+		{ssi,"END",[],[]}.
+</erl>
