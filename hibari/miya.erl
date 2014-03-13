@@ -17,7 +17,7 @@ example_tables() ->
 	[
 		{hot_word, "l000", <<"日本語123">> },
 		%{hot_word, 2, "World"},
-		%{hot_word, 1, "Hello-1"},
+		%{hot_word, 1, "Hello-2"},
 		%{hot_word, 2, "World-1"},
 		{hot_word, "3", << "Night" >>}
 	].
